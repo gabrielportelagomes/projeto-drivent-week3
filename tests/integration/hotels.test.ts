@@ -117,18 +117,18 @@ describe("GET /hotels", () => {
       const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
       const payment = await createPayment(ticket.id, ticketType.price);
       await ticketProcessPayment(payment.ticketId);
-      await createHotel();
+      const hotel = await createHotel();
 
       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(httpStatus.OK);
       expect(response.body).toEqual([
         {
-          id: expect.any(Number),
-          name: expect.any(String),
-          image: expect.any(String),
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
+          id: hotel.id,
+          name: hotel.name,
+          image: hotel.image,
+          createdAt: hotel.createdAt.toISOString(),
+          updatedAt: hotel.updatedAt.toISOString(),
         },
       ]);
     });
@@ -247,25 +247,25 @@ describe("GET /hotels/:hotelId", () => {
       const payment = await createPayment(ticket.id, ticketType.price);
       await ticketProcessPayment(payment.ticketId);
       const hotel = await createHotel();
-      await createRoom(hotel.id);
+      const room = await createRoom(hotel.id);
 
       const response = await server.get(`/hotels/${hotel.id}`).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(httpStatus.OK);
       expect(response.body).toEqual({
-        id: expect.any(Number),
-        name: expect.any(String),
-        image: expect.any(String),
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        id: hotel.id,
+        name: hotel.name,
+        image: hotel.image,
+        createdAt: hotel.createdAt.toISOString(),
+        updatedAt: hotel.updatedAt.toISOString(),
         Rooms: [
           {
-            id: expect.any(Number),
-            name: expect.any(String),
-            capacity: expect.any(Number),
-            hotelId: expect.any(Number),
-            createdAt: expect.any(String),
-            updatedAt: expect.any(String),
+            id: room.id,
+            name: room.name,
+            capacity: room.capacity,
+            hotelId: room.hotelId,
+            createdAt: room.createdAt.toISOString(),
+            updatedAt: room.updatedAt.toISOString(),
           },
         ],
       });
